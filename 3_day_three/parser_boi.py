@@ -4,16 +4,32 @@ class ParserBoi:
     not_symbol = is_number.union(is_period)
 
     def __init__(self):
-        pass
+        previous_parts: []
+        current_parts: []
 
     def is_part(self, line: str):
-        for char in line:
+        result = []
+        for idx, char in enumerate(line):
             if char not in self.not_symbol:
-                symbol_idx = line.find(char)
-                if line[symbol_idx - 1] in self.is_number:
-                    search_idx = symbol_idx - 1
-                    part_number = ""
-                    while line[search_idx] in self.is_number:
-                        part_number = line[search_idx] + part_number
-                        search_idx -= 1
-                    return part_number
+                entry = self.find_part_horizontal(idx, line)
+                result.append(entry)
+        return result
+
+    def find_part_horizontal(self, symbol_idx: int, line: str):
+        before_symbol = ""
+        after_symbol = ""
+        for i in range(symbol_idx - 1, -1, -1):
+            if line[i] in self.is_number:
+                before_symbol = line[i] + before_symbol
+            else:
+                break
+
+        for i in range(symbol_idx + 1, len(line), 1):
+            if line[i] in self.is_number:
+                after_symbol += line[i]
+            else:
+                break
+        return [before_symbol, after_symbol]
+
+    def find_part_vertical(self, symbol_idx: int, line: str):
+        pass
